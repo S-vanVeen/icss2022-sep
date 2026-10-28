@@ -49,7 +49,17 @@ stylesheet: (variableAssignment | stylerule)* EOF;
 
 variableAssignment: CAPITAL_IDENT ASSIGNMENT_OPERATOR expression SEMICOLON;
 
-stylerule: selector OPEN_BRACE declaration* CLOSE_BRACE;
+stylerule: selector OPEN_BRACE bodyItem* CLOSE_BRACE;
+
+// things that can be inside { } of a stylerule, if or else
+bodyItem: declaration
+        | ifClause
+        | variableAssignment
+        ;
+
+ifClause: IF BOX_BRACKET_OPEN expression BOX_BRACKET_CLOSE OPEN_BRACE bodyItem* CLOSE_BRACE elseClause?;
+
+elseClause: ELSE OPEN_BRACE bodyItem* CLOSE_BRACE;
 
 selector: ID_IDENT      #idSelector
         | CLASS_IDENT   #classSelector
@@ -58,9 +68,12 @@ selector: ID_IDENT      #idSelector
 
 declaration: LOWER_IDENT COLON expression SEMICOLON;
 
-// level 2 will add the operations here
-expression: literal         #literalExpression
-          | CAPITAL_IDENT   #variableReference
+// order matters here: multiply comes first so it binds tighter than plus/min
+expression: expression MUL expression   #multiplyOperation
+          | expression PLUS expression  #addOperation
+          | expression MIN expression   #subtractOperation
+          | literal                     #literalExpression
+          | CAPITAL_IDENT               #variableReference
           ;
 
 literal: COLOR          #colorLiteral

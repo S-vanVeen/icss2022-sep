@@ -53,6 +53,29 @@ public class ASTListener extends ICSSBaseListener {
 	}
 
 	@Override
+	public void enterIfClause(ICSSParser.IfClauseContext ctx) {
+		currentContainer.push(new IfClause());
+	}
+
+	@Override
+	public void exitIfClause(ICSSParser.IfClauseContext ctx) {
+		ASTNode ifClause = currentContainer.pop();
+		currentContainer.peek().addChild(ifClause);
+	}
+
+	@Override
+	public void enterElseClause(ICSSParser.ElseClauseContext ctx) {
+		currentContainer.push(new ElseClause());
+	}
+
+	@Override
+	public void exitElseClause(ICSSParser.ElseClauseContext ctx) {
+		// the else is a child of the if clause that's below it on the stack
+		ASTNode elseClause = currentContainer.pop();
+		currentContainer.peek().addChild(elseClause);
+	}
+
+	@Override
 	public void enterIdSelector(ICSSParser.IdSelectorContext ctx) {
 		currentContainer.peek().addChild(new IdSelector(ctx.getText()));
 	}
@@ -90,6 +113,39 @@ public class ASTListener extends ICSSBaseListener {
 	public void exitVariableAssignment(ICSSParser.VariableAssignmentContext ctx) {
 		ASTNode assignment = currentContainer.pop();
 		currentContainer.peek().addChild(assignment);
+	}
+
+	@Override
+	public void enterMultiplyOperation(ICSSParser.MultiplyOperationContext ctx) {
+		currentContainer.push(new MultiplyOperation());
+	}
+
+	@Override
+	public void exitMultiplyOperation(ICSSParser.MultiplyOperationContext ctx) {
+		ASTNode operation = currentContainer.pop();
+		currentContainer.peek().addChild(operation);
+	}
+
+	@Override
+	public void enterAddOperation(ICSSParser.AddOperationContext ctx) {
+		currentContainer.push(new AddOperation());
+	}
+
+	@Override
+	public void exitAddOperation(ICSSParser.AddOperationContext ctx) {
+		ASTNode operation = currentContainer.pop();
+		currentContainer.peek().addChild(operation);
+	}
+
+	@Override
+	public void enterSubtractOperation(ICSSParser.SubtractOperationContext ctx) {
+		currentContainer.push(new SubtractOperation());
+	}
+
+	@Override
+	public void exitSubtractOperation(ICSSParser.SubtractOperationContext ctx) {
+		ASTNode operation = currentContainer.pop();
+		currentContainer.peek().addChild(operation);
 	}
 
 	@Override
