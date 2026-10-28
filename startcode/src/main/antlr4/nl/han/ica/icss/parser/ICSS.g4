@@ -45,5 +45,29 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: EOF;
+stylesheet: (variableAssignment | stylerule)* EOF;
+
+variableAssignment: CAPITAL_IDENT ASSIGNMENT_OPERATOR expression SEMICOLON;
+
+stylerule: selector OPEN_BRACE declaration* CLOSE_BRACE;
+
+selector: ID_IDENT      #idSelector
+        | CLASS_IDENT   #classSelector
+        | LOWER_IDENT   #tagSelector
+        ;
+
+declaration: LOWER_IDENT COLON expression SEMICOLON;
+
+// level 2 will add the operations here
+expression: literal         #literalExpression
+          | CAPITAL_IDENT   #variableReference
+          ;
+
+literal: COLOR          #colorLiteral
+       | PIXELSIZE      #pixelLiteral
+       | PERCENTAGE     #percentageLiteral
+       | SCALAR         #scalarLiteral
+       | TRUE           #boolLiteral
+       | FALSE          #boolLiteral
+       ;
 
