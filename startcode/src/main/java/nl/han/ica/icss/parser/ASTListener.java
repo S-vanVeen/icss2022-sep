@@ -127,23 +127,16 @@ public class ASTListener extends ICSSBaseListener {
 	}
 
 	@Override
-	public void enterAddOperation(ICSSParser.AddOperationContext ctx) {
-		currentContainer.push(new AddOperation());
+	public void enterAddOrSubtractOperation(ICSSParser.AddOrSubtractOperationContext ctx) {
+		if (ctx.op.getType() == ICSSParser.PLUS) {
+			currentContainer.push(new AddOperation());
+		} else {
+			currentContainer.push(new SubtractOperation());
+		}
 	}
 
 	@Override
-	public void exitAddOperation(ICSSParser.AddOperationContext ctx) {
-		ASTNode operation = currentContainer.pop();
-		currentContainer.peek().addChild(operation);
-	}
-
-	@Override
-	public void enterSubtractOperation(ICSSParser.SubtractOperationContext ctx) {
-		currentContainer.push(new SubtractOperation());
-	}
-
-	@Override
-	public void exitSubtractOperation(ICSSParser.SubtractOperationContext ctx) {
+	public void exitAddOrSubtractOperation(ICSSParser.AddOrSubtractOperationContext ctx) {
 		ASTNode operation = currentContainer.pop();
 		currentContainer.peek().addChild(operation);
 	}

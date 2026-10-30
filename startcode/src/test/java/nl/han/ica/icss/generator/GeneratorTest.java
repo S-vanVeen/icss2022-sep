@@ -34,6 +34,16 @@ class GeneratorTest {
     }
 
     @Test
+    void minusAndPlusAreLeftToRight() {
+        assertEquals("p {\n  width: 7px;\n}\n", cssFor("p { width: 10px - 5px + 2px; }"));
+    }
+
+    @Test
+    void multiplyGoesBeforePlus() {
+        assertEquals("p {\n  width: 68px;\n}\n", cssFor("p { width: 50px + 2 * 10px - 2px; }"));
+    }
+
+    @Test
     void ifTakesTheRightBranch() {
         String icss = "A := TRUE; B := FALSE;"
                 + " p { if[A] { width: 1px; } else { width: 2px; }"

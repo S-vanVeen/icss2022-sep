@@ -69,11 +69,11 @@ selector: ID_IDENT      #idSelector
 declaration: LOWER_IDENT COLON expression SEMICOLON;
 
 // order matters here: multiply comes first so it binds tighter than plus/min
-expression: expression MUL expression   #multiplyOperation
-          | expression PLUS expression  #addOperation
-          | expression MIN expression   #subtractOperation
-          | literal                     #literalExpression
-          | CAPITAL_IDENT               #variableReference
+// plus and min are in one alternative, otherwise 10px - 5px + 2px goes wrong
+expression: expression MUL expression               #multiplyOperation
+          | expression op=(PLUS | MIN) expression   #addOrSubtractOperation
+          | literal                                 #literalExpression
+          | CAPITAL_IDENT                           #variableReference
           ;
 
 literal: COLOR          #colorLiteral
